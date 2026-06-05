@@ -1,9 +1,20 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { getEventBySlug, getApprovedPhotos } from "@/lib/events";
+import { eventMetadata } from "@/lib/metadata";
 import { uploadUrl, qrSvg } from "@/lib/qr";
 import { PhotoWall } from "@/components/PhotoWall";
 
 export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  return eventMetadata(await getEventBySlug(slug), "wall");
+}
 
 export default async function WallPage({
   params,

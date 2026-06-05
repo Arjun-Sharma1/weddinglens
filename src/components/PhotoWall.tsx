@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { usePhotoStream } from "@/hooks/usePhotoStream";
 import { useFullscreen } from "@/hooks/useFullscreen";
 import { publicPhotoUrl } from "@/lib/storage";
@@ -54,7 +55,14 @@ export function PhotoWall({
             {event.name}
           </h1>
         </div>
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4 sm:gap-6">
+          <Link
+            href={`/event/${event.slug}/upload`}
+            className="focus-gold inline-flex items-center gap-1.5 rounded-full border border-gold/40 px-4 py-2 text-xs font-medium uppercase tracking-[0.12em] text-gold-light transition hover:border-gold hover:bg-gold/10"
+          >
+            <CameraGlyph />
+            Add a photo
+          </Link>
           <div className="text-right">
             <div className="font-display text-2xl text-gold md:text-3xl">{total}</div>
             <div className="text-[0.65rem] uppercase tracking-[0.2em] text-paper/55">
@@ -113,5 +121,24 @@ export function PhotoWall({
         </div>
       )}
     </main>
+  );
+}
+
+function CameraGlyph() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.8"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden
+    >
+      <path d="M3 8.5A1.5 1.5 0 0 1 4.5 7H7l1.2-1.8A1 1 0 0 1 9 4.7h6a1 1 0 0 1 .8.5L17 7h2.5A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z" />
+      <circle cx="12" cy="12.5" r="3.2" />
+    </svg>
   );
 }

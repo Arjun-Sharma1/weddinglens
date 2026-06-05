@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import {
   setPhotoStatus,
@@ -260,6 +261,15 @@ export function ModerationGrid({
   );
 }
 
+/** Renders children into document.body so fixed overlays escape the
+ *  dashboard's `<main>` stacking context (which sits below the sticky nav). */
+function Portal({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+  return createPortal(children, document.body);
+}
+
 function ConfirmDelete({
   count,
   pending,
@@ -280,6 +290,7 @@ function ConfirmDelete({
   }, [onCancel]);
 
   return (
+    <Portal>
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-night/80 p-4 backdrop-blur-sm"
       role="dialog"
@@ -315,6 +326,7 @@ function ConfirmDelete({
         </div>
       </div>
     </div>
+    </Portal>
   );
 }
 
@@ -378,6 +390,7 @@ function Lightbox({
   ].filter(Boolean);
 
   return (
+    <Portal>
     <div
       className="fixed inset-0 z-50 flex flex-col bg-night/90 backdrop-blur-sm"
       role="dialog"
@@ -484,6 +497,7 @@ function Lightbox({
         </div>
       </div>
     </div>
+    </Portal>
   );
 }
 

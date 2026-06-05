@@ -261,6 +261,14 @@ export function CameraCapture({
               <button onClick={reset} className="btn btn-gold mt-9 px-8 py-4">
                 Take another
               </button>
+              <div className="mt-5">
+                <Link
+                  href={`/event/${slug}/wall`}
+                  className="focus-gold text-sm tracking-wide text-paper/65 underline-offset-4 transition hover:text-gold hover:underline"
+                >
+                  See it on the wall →
+                </Link>
+              </div>
             </div>
           </div>
         )}

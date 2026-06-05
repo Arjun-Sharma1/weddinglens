@@ -1,7 +1,15 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { requireAdmin } from "@/lib/require-admin";
 import { signOut } from "@/auth";
 import { Brand } from "@/components/Brand";
+
+export const metadata: Metadata = {
+  title: { absolute: "Studio · WeddingLens Live" },
+  description: "Organizer studio for WeddingLens Live.",
+  robots: { index: false, follow: false },
+  openGraph: { siteName: "WeddingLens Live", title: "Studio · WeddingLens Live" },
+};
 
 export default async function DashboardLayout({
   children,

@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import { getEventBySlug } from "@/lib/events";
 import { formatEventDate } from "@/lib/format";
 import { publicPhotoUrl } from "@/lib/storage";
+import { eventMetadata } from "@/lib/metadata";
 import { Brand, Ornament } from "@/components/Brand";
 
 export const dynamic = "force-dynamic";
@@ -14,8 +15,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const event = await getEventBySlug(slug);
-  return { title: event ? `${event.name} · WeddingLens Live` : "WeddingLens Live" };
+  return eventMetadata(await getEventBySlug(slug), "invite");
 }
 
 export default async function EventLanding({
@@ -73,6 +73,14 @@ export default async function EventLanding({
           Open the camera
         </Link>
 
+        <Link
+          href={`/event/${slug}/wall`}
+          className="btn btn-ghost group mt-3 w-full px-8 py-3.5 text-base"
+        >
+          <GalleryGlyph />
+          View the photo wall
+        </Link>
+
         <div className="mt-10 flex items-center justify-center gap-2 text-ink-faint">
           <Ornament />
           <span className="text-xs tracking-wide">No app, no sign-up</span>
@@ -99,6 +107,27 @@ function CameraGlyph() {
     >
       <path d="M3 8.5A1.5 1.5 0 0 1 4.5 7H7l1.2-1.8A1 1 0 0 1 9 4.7h6a1 1 0 0 1 .8.5L17 7h2.5A1.5 1.5 0 0 1 21 8.5v9A1.5 1.5 0 0 1 19.5 19h-15A1.5 1.5 0 0 1 3 17.5z" />
       <circle cx="12" cy="12.5" r="3.2" />
+    </svg>
+  );
+}
+
+function GalleryGlyph() {
+  return (
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="transition group-hover:scale-110"
+      aria-hidden
+    >
+      <rect x="3" y="5" width="18" height="14" rx="2" />
+      <circle cx="8.5" cy="10" r="1.4" />
+      <path d="M21 16l-5-4.5L7 19" />
     </svg>
   );
 }

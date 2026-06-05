@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getEventBySlug } from "@/lib/events";
+import { eventMetadata } from "@/lib/metadata";
 import { CameraCapture } from "@/components/CameraCapture";
 
 export const dynamic = "force-dynamic";
@@ -11,8 +12,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const event = await getEventBySlug(slug);
-  return { title: event ? `Capture · ${event.name}` : "WeddingLens Live" };
+  return eventMetadata(await getEventBySlug(slug), "capture");
 }
 
 export default async function UploadPage({

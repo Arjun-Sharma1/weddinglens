@@ -20,7 +20,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://weddinglens.live";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "WeddingLens Live — your live wedding photo wall",
+    default: "WeddingLens Live — your live event photo wall",
     template: "%s · WeddingLens",
   },
   description:
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "WeddingLens Live",
-    title: "WeddingLens Live — your live wedding photo wall",
+    title: "WeddingLens Live — your live event photo wall",
     description:
       "Guests scan a QR code, snap a photo, and it appears on the big screen in seconds. No app. No sign-up. Pure celebration.",
     url: siteUrl,
@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "WeddingLens Live",
     description:
-      "Every guest, a photographer — a live wedding photo wall on the big screen.",
+      "Every guest, a photographer — a live event photo wall on the big screen.",
   },
 };
 

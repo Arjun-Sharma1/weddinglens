@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import { Brand, Ornament } from "@/components/Brand";
@@ -74,6 +75,13 @@ export default function AdminLogin() {
         <button type="submit" disabled={loading} className="btn btn-primary mt-7 w-full py-3.5">
           {loading ? "Signing in…" : "Sign in"}
         </button>
+
+        <Link
+          href="/"
+          className="mt-5 block text-center text-sm text-ink-soft transition-colors hover:text-ink"
+        >
+          ← Back to home
+        </Link>
       </form>
     </main>
   );

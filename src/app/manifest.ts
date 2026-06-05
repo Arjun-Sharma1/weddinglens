@@ -5,7 +5,7 @@ export default function manifest(): MetadataRoute.Manifest {
     name: "WeddingLens Live",
     short_name: "WeddingLens",
     description:
-      "Scan, snap, and watch your photos appear on the big screen — a live wedding photo wall.",
+      "Scan, snap, and watch your photos appear on the big screen — a live event photo wall.",
     start_url: "/",
     display: "standalone",
     background_color: "#f8f3ea",

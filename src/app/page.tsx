@@ -8,7 +8,7 @@ export default function Home() {
 
       <div className="mt-12 flex items-center gap-3 animate-rise">
         <span className="rule-gold w-12" />
-        <span className="eyebrow">Live wedding photo wall</span>
+        <span className="eyebrow">Live event photo wall</span>
         <span className="rule-gold w-12" />
       </div>
 

@@ -27,6 +27,26 @@ export default function Home() {
         </Link>
       </div>
 
+      <section className="mt-16 flex flex-col items-center animate-rise">
+        <div className="flex items-center gap-3">
+          <span className="rule-gold w-10" />
+          <span className="eyebrow">Get in touch</span>
+          <span className="rule-gold w-10" />
+        </div>
+        <p className="mt-5 max-w-sm text-ink-soft">
+          Planning a celebration? Let&apos;s make every guest a{" "}
+          <span className="foil">photographer</span>.
+        </p>
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
+          <a href="mailto:a.sharma11@live.ca" className="btn btn-ghost px-6 py-3">
+            a.sharma11@live.ca
+          </a>
+          <a href="tel:+16472709911" className="btn btn-ghost px-6 py-3">
+            647-270-9911
+          </a>
+        </div>
+      </section>
+
       <div className="mt-16 flex items-center gap-2 text-ink-faint">
         <Ornament />
         <span className="text-xs uppercase tracking-[0.2em]">

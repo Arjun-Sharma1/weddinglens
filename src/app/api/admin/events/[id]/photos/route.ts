@@ -1,4 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
+import { auth } from "@/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ingestPhoto } from "@/lib/photo-ingest";
 import type { EventRow } from "@/lib/types";
@@ -6,19 +7,29 @@ import type { EventRow } from "@/lib/types";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+/**
+ * Moderator seed upload: add existing photos (from the moderator's device) to
+ * an event so the slideshow / wall isn't empty. Unlike the guest route this
+ * skips the live-photo freshness gate and always approves, regardless of the
+ * event's moderation mode. One photo per request.
+ */
 export async function POST(
   req: NextRequest,
-  ctx: { params: Promise<{ slug: string }> },
+  ctx: { params: Promise<{ id: string }> },
 ) {
-  const { slug } = await ctx.params;
+  const session = await auth();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
+  }
+
+  const { id } = await ctx.params;
   const supabase = createAdminClient();
 
-  // 1. Resolve the event.
   const { data: event, error: eventErr } = await supabase
     .from("events")
-    .select("id, moderation, slug")
-    .eq("slug", slug)
-    .maybeSingle<Pick<EventRow, "id" | "moderation" | "slug">>();
+    .select("id, moderation")
+    .eq("id", id)
+    .maybeSingle<Pick<EventRow, "id" | "moderation">>();
 
   if (eventErr) {
     return NextResponse.json({ error: "Lookup failed." }, { status: 500 });
@@ -27,7 +38,6 @@ export async function POST(
     return NextResponse.json({ error: "Event not found." }, { status: 404 });
   }
 
-  // 2. Read the uploaded file.
   let file: File | null = null;
   try {
     const form = await req.formData();
@@ -40,15 +50,13 @@ export async function POST(
     return NextResponse.json({ error: "No photo provided." }, { status: 400 });
   }
 
-  // 3. Ingest — guests are held to the live-photo freshness gate, and the
-  //    resulting status follows the event's moderation mode.
-  const result = await ingestPhoto(file, event, { enforceFreshness: true });
+  const result = await ingestPhoto(file, event, {
+    enforceFreshness: false,
+    forceStatus: "approved",
+  });
 
   if (!result.ok) {
-    return NextResponse.json(
-      { error: result.error, ...(result.stale ? { stale: true } : {}) },
-      { status: result.httpStatus },
-    );
+    return NextResponse.json({ error: result.error }, { status: result.httpStatus });
   }
 
   return NextResponse.json({
@@ -56,6 +64,5 @@ export async function POST(
     id: result.id,
     status: result.status,
     duplicate: result.duplicate,
-    pending: result.status === "pending",
   });
 }

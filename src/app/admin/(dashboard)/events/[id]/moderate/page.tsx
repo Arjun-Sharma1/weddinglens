@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getEventById, getEventPhotosAll } from "@/lib/events";
 import { ModerationGrid } from "@/components/ModerationGrid";
+import { SeedUpload } from "@/components/SeedUpload";
 
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,10 @@ export default async function ModeratePage({
           ? "Manual review is on — only approved photos appear publicly."
           : "Auto-approve is on — photos appear instantly. You can still reject or remove any here."}
       </p>
+
+      <div className="mt-6 rounded-2xl border border-line bg-surface px-5 py-4 shadow-e1">
+        <SeedUpload eventId={event.id} />
+      </div>
 
       <ModerationGrid eventId={event.id} photos={photos} />
     </div>

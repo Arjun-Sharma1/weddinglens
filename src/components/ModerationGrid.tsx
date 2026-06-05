@@ -33,6 +33,7 @@ export function ModerationGrid({
   );
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [previewIndex, setPreviewIndex] = useState<number | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<string[] | null>(null);
   const [pending, startTransition] = useTransition();
 
   const counts = useMemo(() => {
@@ -60,6 +61,20 @@ export function ModerationGrid({
       return next;
     });
 
+  const allVisibleSelected =
+    visible.length > 0 && visible.every((p) => selected.has(p.id));
+
+  const toggleAllVisible = () =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (allVisibleSelected) {
+        for (const p of visible) next.delete(p.id);
+      } else {
+        for (const p of visible) next.add(p.id);
+      }
+      return next;
+    });
+
   const selectedIds = [...selected];
 
   return (
@@ -80,6 +95,15 @@ export function ModerationGrid({
             <span className="ml-1.5 opacity-70">{counts[f.key]}</span>
           </button>
         ))}
+
+        {visible.length > 0 && (
+          <button
+            onClick={toggleAllVisible}
+            className="focus-gold ml-auto rounded-full border border-line bg-surface px-4 py-1.5 text-sm font-medium text-ink-soft shadow-e1 transition hover:border-gold hover:text-gold-deep"
+          >
+            {allVisibleSelected ? "Deselect all" : `Select all ${visible.length}`}
+          </button>
+        )}
       </div>
 
       {/* Bulk action bar */}
@@ -105,7 +129,7 @@ export function ModerationGrid({
             </button>
             <button
               disabled={pending}
-              onClick={() => run(() => bulkDelete(selectedIds, eventId))}
+              onClick={() => setConfirmDelete(selectedIds)}
               className="focus-gold rounded-full bg-red-600 px-3.5 py-1.5 text-xs font-medium text-white hover:bg-red-700 disabled:opacity-60"
             >
               Delete
@@ -159,10 +183,10 @@ export function ModerationGrid({
                   onClick={() => toggle(photo.id)}
                   aria-label={isSel ? "Deselect photo" : "Select photo"}
                   aria-pressed={isSel}
-                  className={`absolute right-2 top-2 grid h-6 w-6 place-items-center rounded-full border text-[11px] backdrop-blur transition ${
+                  className={`absolute right-2 top-2 grid h-7 w-7 place-items-center rounded-full border text-[11px] backdrop-blur transition ${
                     isSel
                       ? "border-gold bg-gold text-night"
-                      : "border-paper/70 bg-night/40 text-paper opacity-0 group-hover:opacity-100"
+                      : "border-paper/80 bg-night/50 text-paper opacity-90 group-hover:opacity-100"
                   }`}
                 >
                   {isSel ? "✓" : ""}
@@ -219,6 +243,77 @@ export function ModerationGrid({
           onAction={run}
         />
       )}
+
+      {confirmDelete && (
+        <ConfirmDelete
+          count={confirmDelete.length}
+          pending={pending}
+          onCancel={() => setConfirmDelete(null)}
+          onConfirm={() => {
+            const ids = confirmDelete;
+            setConfirmDelete(null);
+            run(() => bulkDelete(ids, eventId));
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+function ConfirmDelete({
+  count,
+  pending,
+  onCancel,
+  onConfirm,
+}: {
+  count: number;
+  pending: boolean;
+  onCancel: () => void;
+  onConfirm: () => void;
+}) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onCancel();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onCancel]);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-night/80 p-4 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Confirm delete"
+      onClick={onCancel}
+    >
+      <div
+        className="glass w-full max-w-sm rounded-2xl border-gold/50 p-6 shadow-e3"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h2 className="text-lg font-semibold text-ink">
+          Delete {count} photo{count === 1 ? "" : "s"}?
+        </h2>
+        <p className="mt-2 text-sm text-ink-soft">
+          This permanently removes the selected photo{count === 1 ? "" : "s"} and
+          can&rsquo;t be undone.
+        </p>
+        <div className="mt-6 flex justify-end gap-2">
+          <button
+            onClick={onCancel}
+            className="focus-gold rounded-full border border-line bg-surface px-4 py-1.5 text-sm font-medium text-ink-soft shadow-e1 hover:text-ink"
+          >
+            Cancel
+          </button>
+          <button
+            disabled={pending}
+            onClick={onConfirm}
+            className="focus-gold rounded-full bg-red-600 px-4 py-1.5 text-sm font-medium text-white hover:bg-red-700 disabled:opacity-60"
+          >
+            Delete {count}
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

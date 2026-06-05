@@ -1,0 +1,140 @@
+@import "tailwindcss";
+
+/* ──────────────────────────────────────────────────────────────
+   WeddingLens Live — design tokens
+   Light world: ivory paper + warm ink + champagne gold (guest/admin)
+   Dark world:  cinematic charcoal + gold (big-screen displays)
+   ────────────────────────────────────────────────────────────── */
+:root {
+  --paper:        #f8f3ea;  /* warm ivory background */
+  --paper-deep:   #efe7d8;  /* slightly deeper panel */
+  --ink:          #1b1714;  /* warm near-black */
+  --ink-soft:     #4a423b;  /* muted body text */
+  --ink-faint:    #8a7f72;  /* captions / hints */
+  --line:         #e2d7c4;  /* hairline borders */
+
+  --gold:         #c2a15b;  /* champagne gold */
+  --gold-deep:    #a07f3c;  /* gold shadow / hover */
+  --gold-light:   #e7d4a3;  /* gold highlight */
+
+  --night:        #100d0b;  /* display background */
+  --night-2:      #1c1714;  /* display panel */
+
+  --ring:         color-mix(in srgb, var(--gold) 55%, transparent);
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-deep: var(--paper-deep);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-line: var(--line);
+  --color-gold: var(--gold);
+  --color-gold-deep: var(--gold-deep);
+  --color-gold-light: var(--gold-light);
+  --color-night: var(--night);
+  --color-night-2: var(--night-2);
+
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-instrument);
+
+  --radius-xl2: 1.75rem;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ── Utilities ────────────────────────────────────────────── */
+
+/* Champagne foil text */
+.foil {
+  background: linear-gradient(
+    100deg,
+    var(--gold-deep) 0%,
+    var(--gold-light) 38%,
+    var(--gold) 55%,
+    var(--gold-light) 72%,
+    var(--gold-deep) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Paper grain / noise overlay — apply to a fixed full-bleed element */
+.grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Thin gold hairline divider with center ornament spacing */
+.rule-gold {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--gold) 20%,
+    var(--gold) 80%,
+    transparent
+  );
+}
+
+/* Letter-spaced eyebrow label */
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.32em;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--gold-deep);
+}
+
+/* Focus ring */
+.focus-gold:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px var(--ring);
+}
+
+/* ── Motion ───────────────────────────────────────────────── */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes pulse-soft {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.04); opacity: 0.92; }
+}
+
+.animate-rise { animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.animate-fade-in { animation: fade-in 0.6s ease both; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

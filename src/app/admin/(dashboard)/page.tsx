@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { getAllEvents } from "@/lib/events";
 import { formatEventDate } from "@/lib/format";
@@ -15,10 +16,7 @@ export default async function AdminHome() {
           <p className="eyebrow">Your celebrations</p>
           <h1 className="font-display mt-2 text-4xl text-ink">Events</h1>
         </div>
-        <Link
-          href="/admin/events/new"
-          className="focus-gold rounded-full bg-ink px-5 py-3 text-sm font-medium text-paper transition hover:bg-gold-deep"
-        >
+        <Link href="/admin/events/new" className="btn btn-primary px-5 py-3 text-sm">
           + New event
         </Link>
       </div>
@@ -26,7 +24,7 @@ export default async function AdminHome() {
       <div className="rule-gold my-8" />
 
       {events.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-line py-20 text-center">
+        <div className="card vignette border-dashed py-20 text-center shadow-none">
           <div className="flex items-center justify-center gap-3">
             <Ornament />
             <span className="eyebrow">Nothing here yet</span>
@@ -40,22 +38,22 @@ export default async function AdminHome() {
           </p>
           <Link
             href="/admin/events/new"
-            className="focus-gold mt-6 inline-block rounded-full bg-ink px-6 py-3 text-sm font-medium text-paper hover:bg-gold-deep"
+            className="btn btn-primary mt-6 px-6 py-3 text-sm"
           >
             + New event
           </Link>
         </div>
       ) : (
-        <ul className="grid gap-4 sm:grid-cols-2">
-          {events.map((event) => (
-            <li key={event.id}>
+        <ul className="stagger grid gap-5 sm:grid-cols-2">
+          {events.map((event, i) => (
+            <li key={event.id} style={{ "--i": i } as CSSProperties}>
               <Link
                 href={`/admin/events/${event.id}`}
-                className="focus-gold group block rounded-2xl border border-line bg-paper-deep/30 p-6 transition hover:border-gold hover:shadow-[0_20px_50px_-30px_rgba(120,90,30,0.4)]"
+                className="focus-gold card lift group block p-6"
               >
                 <div className="flex items-center justify-between">
                   <span className="eyebrow">/{event.slug}</span>
-                  <span className="rounded-full border border-line px-2.5 py-1 text-[0.65rem] uppercase tracking-wider text-ink-faint">
+                  <span className="rounded-full border border-line bg-surface-sunk px-2.5 py-1 text-[0.65rem] uppercase tracking-wider text-ink-faint">
                     {event.mode} · {event.moderation}
                   </span>
                 </div>

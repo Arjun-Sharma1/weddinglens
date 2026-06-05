@@ -31,13 +31,13 @@ export default function AdminLogin() {
   }
 
   return (
-    <main className="grain relative flex min-h-dvh items-center justify-center px-6">
+    <main className="grain vignette relative flex min-h-dvh items-center justify-center px-6">
       <form
         onSubmit={onSubmit}
-        className="animate-rise w-full max-w-sm rounded-3xl border border-line bg-paper-deep/40 p-8 shadow-[0_30px_80px_-40px_rgba(120,90,30,0.35)]"
+        className="animate-rise card w-full max-w-sm rounded-3xl p-8 shadow-e4"
       >
-        <div className="text-center">
-          <Brand className="text-xl" />
+        <div className="flex flex-col items-center text-center">
+          <Brand withMark markSize={40} className="flex-col gap-3 text-xl" />
           <div className="mt-5 flex items-center justify-center gap-3">
             <Ornament />
             <span className="eyebrow">Organizer access</span>
@@ -52,7 +52,7 @@ export default function AdminLogin() {
             autoComplete="username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            className="focus-gold mt-1.5 w-full rounded-xl border border-line bg-paper px-4 py-3 text-ink outline-none"
+            className="input mt-1.5"
             required
           />
         </label>
@@ -64,18 +64,14 @@ export default function AdminLogin() {
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="focus-gold mt-1.5 w-full rounded-xl border border-line bg-paper px-4 py-3 text-ink outline-none"
+            className="input mt-1.5"
             required
           />
         </label>
 
         {error && <p className="mt-4 text-sm text-red-700">{error}</p>}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="focus-gold mt-7 w-full rounded-full bg-ink py-3.5 font-medium text-paper transition hover:bg-gold-deep disabled:opacity-60"
-        >
+        <button type="submit" disabled={loading} className="btn btn-primary mt-7 w-full py-3.5">
           {loading ? "Signing in…" : "Sign in"}
         </button>
       </form>

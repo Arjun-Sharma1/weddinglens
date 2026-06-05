@@ -30,9 +30,9 @@ export default async function EventLanding({
   const dateLabel = formatEventDate(event.event_date);
 
   return (
-    <main className="grain relative flex min-h-dvh flex-col items-center justify-center px-6 py-12">
+    <main className="grain vignette relative flex min-h-dvh flex-col items-center justify-center px-6 py-12">
       <div className="animate-rise w-full max-w-md text-center">
-        <Brand className="text-xl" />
+        <Brand withMark markSize={28} className="text-xl" />
 
         {event.cover_image_path && (
           // Plain img: cover lives on the Supabase CDN.
@@ -67,7 +67,7 @@ export default async function EventLanding({
 
         <Link
           href={`/event/${slug}/upload`}
-          className="focus-gold group mt-9 inline-flex w-full items-center justify-center gap-3 rounded-full bg-ink px-8 py-4 text-base font-medium text-paper shadow-lg transition hover:bg-gold-deep"
+          className="btn btn-primary group mt-9 w-full px-8 py-4 text-base"
         >
           <CameraGlyph />
           Open the camera

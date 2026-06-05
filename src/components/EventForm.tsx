@@ -22,7 +22,7 @@ export function EventForm({
   );
 
   return (
-    <form action={formAction} className="mt-8 space-y-6">
+    <form action={formAction} className="space-y-6">
       <Field label="Event name" hint="e.g. Arjun & Priya">
         <input
           name="name"
@@ -35,12 +35,12 @@ export function EventForm({
 
       <div className="grid gap-6 sm:grid-cols-2">
         <Field label="Link (slug)" hint="Leave blank to auto-generate">
-          <div className="flex items-center rounded-xl border border-line bg-paper px-3">
+          <div className="input flex items-center gap-1 px-3 py-0 focus-within:border-gold focus-within:bg-surface focus-within:shadow-[0_0_0_3px_var(--ring)]">
             <span className="text-sm text-ink-faint">/event/</span>
             <input
               name="slug"
               defaultValue={event?.slug ?? ""}
-              className="w-full bg-transparent px-1 py-3 text-ink outline-none"
+              className="w-full bg-transparent py-3 text-ink outline-none"
               placeholder="arjun-and-priya"
             />
           </div>
@@ -77,13 +77,13 @@ export function EventForm({
       </div>
 
       <div className="grid gap-6 sm:grid-cols-2">
-        <Field label="Seconds per photo" hint="Slideshow only">
+        <Field label="Seconds per photo" hint="Slideshow pace">
           <input
             type="number"
             name="slide_seconds"
             min={2}
             max={60}
-            defaultValue={event?.slide_seconds ?? 8}
+            defaultValue={event?.slide_seconds ?? 6}
             className="input"
           />
         </Field>
@@ -107,11 +107,7 @@ export function EventForm({
       )}
 
       <div className="flex items-center gap-3 pt-2">
-        <button
-          type="submit"
-          disabled={pending}
-          className="focus-gold rounded-full bg-ink px-6 py-3 text-sm font-medium text-paper transition hover:bg-gold-deep disabled:opacity-60"
-        >
+        <button type="submit" disabled={pending} className="btn btn-primary px-6 py-3 text-sm">
           {pending ? "Saving…" : submitLabel}
         </button>
         <Link
@@ -121,19 +117,6 @@ export function EventForm({
           Cancel
         </Link>
       </div>
-
-      <style>{`
-        .input {
-          width: 100%;
-          border-radius: 0.75rem;
-          border: 1px solid var(--line);
-          background: var(--paper);
-          padding: 0.75rem 1rem;
-          color: var(--ink);
-          outline: none;
-        }
-        .input:focus-visible { box-shadow: 0 0 0 3px var(--ring); }
-      `}</style>
     </form>
   );
 }

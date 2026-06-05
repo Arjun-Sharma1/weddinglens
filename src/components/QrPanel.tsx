@@ -22,7 +22,7 @@ export function QrPanel({
         {headline}
       </h2>
 
-      <div className="mt-10 rounded-[2rem] bg-paper p-7 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.8)] ring-1 ring-gold/30">
+      <div className="mt-10 rounded-[2rem] bg-paper p-7 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.8),0_0_60px_-12px_rgba(194,161,91,0.45)] ring-1 ring-gold/40">
         <div
           className="h-56 w-56 md:h-64 md:w-64 [&_svg]:h-full [&_svg]:w-full"
           // QR SVG generated on the server from the upload URL.

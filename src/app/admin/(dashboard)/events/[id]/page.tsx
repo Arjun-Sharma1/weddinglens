@@ -50,7 +50,7 @@ export default async function EventDetail({
         <div className="flex flex-wrap items-center gap-2">
           <Link
             href={`/admin/events/${event.id}/edit`}
-            className="focus-gold rounded-full border border-line px-4 py-2 text-sm text-ink-soft transition hover:border-gold hover:text-gold-deep"
+            className="btn btn-ghost px-4 py-2 text-sm"
           >
             Edit
           </Link>
@@ -59,13 +59,12 @@ export default async function EventDetail({
       </div>
 
       {/* Stats */}
-      <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
         {stat.map((s) => (
-          <div
-            key={s.label}
-            className="rounded-2xl border border-line bg-paper-deep/30 p-5"
-          >
-            <div className="font-display text-3xl text-ink">{s.value}</div>
+          <div key={s.label} className="card p-5">
+            <div className="font-display text-3xl text-ink [font-variant-numeric:tabular-nums]">
+              {s.value}
+            </div>
             <div className="mt-1 text-xs uppercase tracking-wider text-ink-faint">
               {s.label}
             </div>
@@ -78,7 +77,7 @@ export default async function EventDetail({
       {event.moderation === "manual" && (
         <Link
           href={`/admin/events/${event.id}/moderate`}
-          className="focus-gold mt-4 flex items-center justify-between rounded-2xl border border-gold/40 bg-gold/5 px-5 py-4 transition hover:bg-gold/10"
+          className="focus-gold lift mt-4 flex items-center justify-between rounded-2xl border border-gold/40 bg-gold/10 px-5 py-4 shadow-e1 transition hover:bg-gold/15"
         >
           <span className="text-ink">
             <strong className="font-display text-xl">{stats.pending}</strong> photo
@@ -93,7 +92,7 @@ export default async function EventDetail({
       <div className="grid gap-8 md:grid-cols-[auto_1fr]">
         {/* QR */}
         <div className="text-center">
-          <div className="inline-block rounded-2xl border border-line bg-white p-4">
+          <div className="inline-block rounded-2xl border border-line bg-white p-4 shadow-e3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={qrPng} alt="Event QR code" className="h-44 w-44" />
           </div>
@@ -117,13 +116,13 @@ export default async function EventDetail({
           <div className="flex flex-wrap gap-2 pt-3">
             <Link
               href={`/admin/events/${event.id}/moderate`}
-              className="focus-gold rounded-full bg-ink px-5 py-2.5 text-sm font-medium text-paper hover:bg-gold-deep"
+              className="btn btn-primary px-5 py-2.5 text-sm"
             >
               Moderate photos
             </Link>
             <a
               href={`/api/admin/events/${event.id}/download`}
-              className="focus-gold rounded-full border border-line px-5 py-2.5 text-sm font-medium text-ink-soft hover:border-gold hover:text-gold-deep"
+              className="btn btn-ghost px-5 py-2.5 text-sm"
             >
               Download package (ZIP + CSV)
             </a>
@@ -144,7 +143,7 @@ function LinkRow({
   openable?: boolean;
 }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-line bg-paper px-4 py-3">
+    <div className="flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3 shadow-e1">
       <div className="min-w-0 flex-1">
         <div className="text-xs uppercase tracking-wider text-ink-faint">{label}</div>
         <div className="truncate text-sm text-ink">{url.replace(/^https?:\/\//, "")}</div>
@@ -154,7 +153,7 @@ function LinkRow({
           href={url}
           target="_blank"
           rel="noreferrer"
-          className="focus-gold rounded-full border border-line px-3 py-1.5 text-xs font-medium text-ink-soft transition hover:border-gold hover:text-gold-deep"
+          className="btn btn-ghost px-3 py-1.5 text-xs"
         >
           Open
         </a>

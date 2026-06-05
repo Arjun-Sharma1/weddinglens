@@ -126,7 +126,7 @@ export function CameraCapture({
     <main className="relative flex min-h-dvh flex-col bg-night text-paper">
       {/* Header */}
       <header className="relative z-20 flex items-center justify-between px-5 pt-5">
-        <Brand className="text-base" onDark />
+        <Brand withMark markSize={24} className="text-base" onDark />
         <span className="max-w-[55%] truncate text-right text-xs uppercase tracking-[0.18em] text-paper/55">
           {eventName}
         </span>
@@ -174,7 +174,7 @@ export function CameraCapture({
               <p className="mt-2 text-sm text-paper/65">
                 Tap below to use your camera.
               </p>
-              <label className="focus-gold mt-6 inline-flex cursor-pointer items-center justify-center gap-2 rounded-full bg-gold px-7 py-3.5 font-medium text-night">
+              <label className="btn btn-gold mt-6 cursor-pointer px-7 py-3.5">
                 Open camera
                 <input
                   type="file"
@@ -213,10 +213,7 @@ export function CameraCapture({
                     ? "We already have this one — nicely done."
                     : "Look up — your moment is on the big screen."}
               </p>
-              <button
-                onClick={reset}
-                className="focus-gold mt-9 inline-flex items-center justify-center gap-2 rounded-full bg-gold px-8 py-4 font-medium text-night transition hover:bg-gold-light"
-              >
+              <button onClick={reset} className="btn btn-gold mt-9 px-8 py-4">
                 Take another
               </button>
             </div>
@@ -260,8 +257,8 @@ export function CameraCapture({
             aria-label="Take photo"
             className="focus-gold group relative grid h-20 w-20 place-items-center rounded-full disabled:opacity-50"
           >
-            <span className="absolute inset-0 rounded-full ring-2 ring-paper/80 transition group-active:scale-95" />
-            <span className="h-16 w-16 rounded-full bg-paper transition group-hover:bg-gold-light group-active:scale-90" />
+            <span className="absolute inset-0 rounded-full ring-2 ring-paper/80 shadow-[0_0_30px_-4px_rgba(231,212,163,0.55)] transition group-active:scale-95" />
+            <span className="h-16 w-16 rounded-full bg-paper shadow-[inset_0_-3px_8px_rgba(0,0,0,0.15)] transition group-hover:bg-gold-light group-active:scale-90" />
           </button>
 
           <button

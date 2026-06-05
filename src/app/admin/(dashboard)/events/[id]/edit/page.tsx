@@ -24,7 +24,9 @@ export default async function EditEventPage({
         ← {event.name}
       </Link>
       <h1 className="font-display mt-4 text-4xl text-ink">Edit event</h1>
-      <EventForm action={action} event={event} submitLabel="Save changes" />
+      <div className="card mt-8 p-6 sm:p-8">
+        <EventForm action={action} event={event} submitLabel="Save changes" />
+      </div>
     </div>
   );
 }

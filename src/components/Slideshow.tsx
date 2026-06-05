@@ -9,6 +9,13 @@ import type { EventRow, PhotoRow } from "@/lib/types";
 
 type Screen = "photo" | "qr" | "thanks";
 
+// Interstitial hold times. The QR is also pinned in the corner full-time, so the
+// big QR screen is just an occasional nudge — keep it brief.
+const QR_HOLD_MS = 5000;
+const THANKS_HOLD_MS = 5000;
+const EMPTY_RECHECK_MS = 5000;
+const THANKS_EVERY = 25; // show the thank-you screen every N photos
+
 export function Slideshow({
   event,
   initialPhotos,
@@ -21,7 +28,7 @@ export function Slideshow({
   uploadHref: string;
 }) {
   const { photos } = usePhotoStream(event.id, initialPhotos);
-  const { toggle: toggleFullscreen } = useFullscreen();
+  const { isFullscreen, toggle: toggleFullscreen } = useFullscreen();
 
   const [screen, setScreen] = useState<Screen>(photos.length ? "photo" : "qr");
   const [front, setFront] = useState<"a" | "b">("a");
@@ -62,7 +69,7 @@ export function Slideshow({
 
       if (list.length === 0) {
         setScreen("qr");
-        timer = setTimeout(step, 5000);
+        timer = setTimeout(step, EMPTY_RECHECK_MS);
         return;
       }
 
@@ -74,12 +81,12 @@ export function Slideshow({
 
       timer = setTimeout(() => {
         if (cancelled) return;
-        if (count % 25 === 0) {
+        if (count % THANKS_EVERY === 0) {
           setScreen("thanks");
-          timer = setTimeout(step, 5000);
+          timer = setTimeout(step, THANKS_HOLD_MS);
         } else if (count % qrEvery === 0) {
           setScreen("qr");
-          timer = setTimeout(step, 20000);
+          timer = setTimeout(step, QR_HOLD_MS);
         } else {
           step();
         }
@@ -140,11 +147,37 @@ export function Slideshow({
         </div>
       </Interstitial>
 
-      {/* Persistent chrome */}
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex items-end justify-between p-8 md:p-10">
-        <div className="font-display text-2xl tracking-tight text-paper/90 md:text-3xl">
-          {event.name}
+      {/* Top chrome: fullscreen control (left) · event name (right) */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-between p-8 md:p-10">
+        <button
+          onClick={toggleFullscreen}
+          aria-label={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"}
+          title={isFullscreen ? "Exit fullscreen (F)" : "Fullscreen (F)"}
+          className="focus-gold glass-dark pointer-events-auto grid h-11 w-11 place-items-center rounded-full text-paper/80 transition hover:text-gold"
+        >
+          {isFullscreen ? <ExitFullscreenGlyph /> : <FullscreenGlyph />}
+        </button>
+
+        <div className="text-right">
+          <p className="eyebrow text-gold-light">Live photo wall</p>
+          <div className="font-display text-2xl leading-tight tracking-tight text-paper/90 md:text-3xl">
+            {event.name}
+          </div>
         </div>
+      </div>
+
+      {/* Bottom chrome: scan-to-join QR (left) · live count (right) */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex items-end justify-between p-8 md:p-10">
+        <div className="flex items-center gap-4">
+          <div className="rounded-2xl bg-paper p-2.5 shadow-night ring-1 ring-gold/40 [&_svg]:h-20 [&_svg]:w-20 md:[&_svg]:h-24 md:[&_svg]:w-24">
+            <div dangerouslySetInnerHTML={{ __html: qrMarkup }} />
+          </div>
+          <div className="hidden sm:block">
+            <p className="eyebrow text-gold-light">Scan to join</p>
+            <p className="mt-1 text-sm text-paper/70">Add your photo to the screen</p>
+          </div>
+        </div>
+
         {total > 0 && (
           <div className="text-right">
             <span className="font-display text-3xl text-gold md:text-4xl">
@@ -160,6 +193,28 @@ export function Slideshow({
   );
 }
 
+function FullscreenGlyph() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M8 3H5a2 2 0 0 0-2 2v3" />
+      <path d="M16 3h3a2 2 0 0 1 2 2v3" />
+      <path d="M8 21H5a2 2 0 0 1-2-2v-3" />
+      <path d="M16 21h3a2 2 0 0 0 2-2v-3" />
+    </svg>
+  );
+}
+
+function ExitFullscreenGlyph() {
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+      <path d="M8 3v3a2 2 0 0 1-2 2H3" />
+      <path d="M21 8h-3a2 2 0 0 1-2-2V3" />
+      <path d="M3 16h3a2 2 0 0 1 2 2v3" />
+      <path d="M16 21v-3a2 2 0 0 1 2-2h3" />
+    </svg>
+  );
+}
+
 function PhotoLayer({ url, active }: { url?: string; active: boolean }) {
   if (!url) return null;
   return (
@@ -167,7 +222,7 @@ function PhotoLayer({ url, active }: { url?: string; active: boolean }) {
     <img
       src={url}
       alt=""
-      className={`absolute inset-0 h-full w-full object-contain transition-opacity duration-1000 ease-in-out ${
+      className={`absolute inset-0 h-full w-full object-contain drop-shadow-[0_28px_55px_rgba(0,0,0,0.6)] transition-opacity duration-1000 ease-in-out ${
         active ? "opacity-100" : "opacity-0"
       }`}
     />

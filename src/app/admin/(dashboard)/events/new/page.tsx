@@ -13,7 +13,9 @@ export default function NewEventPage() {
         Give your celebration a name and a link. You can fine-tune everything
         later.
       </p>
-      <EventForm action={createEvent} submitLabel="Create event" />
+      <div className="card mt-8 p-6 sm:p-8">
+        <EventForm action={createEvent} submitLabel="Create event" />
+      </div>
     </div>
   );
 }

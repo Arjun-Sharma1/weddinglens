@@ -17,18 +17,16 @@ export default async function DashboardLayout({
 
   return (
     <div className="grain relative min-h-dvh">
-      <header className="relative z-10 border-b border-line/70 bg-paper/80 backdrop-blur">
+      <header className="glass sticky top-0 z-20 border-x-0 border-t-0">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <Link href="/admin" className="flex items-center gap-3">
-            <Brand className="text-lg" />
+            <Brand withMark markSize={26} className="text-lg" />
             <span className="hidden text-xs uppercase tracking-[0.25em] text-ink-faint sm:inline">
               Studio
             </span>
           </Link>
           <form action={doSignOut}>
-            <button className="focus-gold rounded-full border border-line px-4 py-2 text-sm text-ink-soft transition hover:border-gold hover:text-gold-deep">
-              Sign out
-            </button>
+            <button className="btn btn-ghost px-4 py-2 text-sm">Sign out</button>
           </form>
         </div>
       </header>

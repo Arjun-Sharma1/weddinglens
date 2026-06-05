@@ -72,8 +72,8 @@ export function ModerationGrid({
             onClick={() => setFilter(f.key)}
             className={`focus-gold rounded-full px-4 py-1.5 text-sm font-medium transition ${
               filter === f.key
-                ? "bg-ink text-paper"
-                : "border border-line text-ink-soft hover:border-gold hover:text-gold-deep"
+                ? "bg-ink text-paper shadow-e2"
+                : "border border-line bg-surface text-ink-soft shadow-e1 hover:border-gold hover:text-gold-deep"
             }`}
           >
             {f.label}
@@ -84,7 +84,7 @@ export function ModerationGrid({
 
       {/* Bulk action bar */}
       {selectedIds.length > 0 && (
-        <div className="sticky top-20 z-10 mt-4 flex flex-wrap items-center gap-2 rounded-2xl border border-gold/40 bg-paper-deep/70 px-4 py-3 backdrop-blur">
+        <div className="glass sticky top-20 z-10 mt-4 flex flex-wrap items-center gap-2 rounded-2xl border-gold/50 px-4 py-3 shadow-e3">
           <span className="text-sm font-medium text-ink">
             {selectedIds.length} selected
           </span>
@@ -130,7 +130,7 @@ export function ModerationGrid({
             return (
               <div
                 key={photo.id}
-                className={`group relative overflow-hidden rounded-xl border bg-paper-deep/20 transition ${
+                className={`group lift relative overflow-hidden rounded-xl border bg-surface shadow-e2 ${
                   isSel ? "border-gold ring-2 ring-gold/40" : "border-line"
                 }`}
               >
@@ -330,7 +330,7 @@ function Lightbox({
           key={photo.id}
           src={publicPhotoUrl(photo.display_path)}
           alt=""
-          className="max-h-full max-w-full rounded-lg object-contain shadow-2xl"
+          className="max-h-full max-w-full rounded-lg object-contain shadow-night"
         />
 
         {hasNext && (

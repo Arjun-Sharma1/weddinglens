@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Fraunces, Instrument_Sans } from "next/font/google";
 import "./globals.css";
 
@@ -15,10 +15,45 @@ const instrument = Instrument_Sans({
   display: "swap",
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://weddinglens.live";
+
 export const metadata: Metadata = {
-  title: "WeddingLens Live",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "WeddingLens Live — your live wedding photo wall",
+    template: "%s · WeddingLens",
+  },
   description:
-    "Scan, snap, and watch your photos appear on the big screen — a live wedding photo wall.",
+    "Every guest, a photographer. Guests scan a QR code, snap a photo, and it appears on the big screen in seconds. No app, no sign-up.",
+  applicationName: "WeddingLens Live",
+  keywords: [
+    "wedding photo wall",
+    "live photo sharing",
+    "QR photo upload",
+    "wedding slideshow",
+    "event photos",
+  ],
+  openGraph: {
+    type: "website",
+    siteName: "WeddingLens Live",
+    title: "WeddingLens Live — your live wedding photo wall",
+    description:
+      "Guests scan a QR code, snap a photo, and it appears on the big screen in seconds. No app. No sign-up. Pure celebration.",
+    url: siteUrl,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "WeddingLens Live",
+    description:
+      "Every guest, a photographer — a live wedding photo wall on the big screen.",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f8f3ea" },
+    { media: "(prefers-color-scheme: dark)", color: "#100d0b" },
+  ],
 };
 
 export default function RootLayout({

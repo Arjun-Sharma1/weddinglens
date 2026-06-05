@@ -16,7 +16,7 @@ function readEventForm(formData: FormData) {
   const eventDate = String(formData.get("event_date") ?? "").trim();
   const mode = String(formData.get("mode") ?? "slideshow");
   const moderation = String(formData.get("moderation") ?? "auto");
-  const slideSeconds = Number(formData.get("slide_seconds") ?? 8);
+  const slideSeconds = Number(formData.get("slide_seconds") ?? 6);
   const qrEvery = Number(formData.get("qr_every") ?? 5);
 
   return {
@@ -25,7 +25,7 @@ function readEventForm(formData: FormData) {
     event_date: eventDate || null,
     mode: mode === "wall" ? "wall" : "slideshow",
     moderation: moderation === "manual" ? "manual" : "auto",
-    slide_seconds: Number.isFinite(slideSeconds) ? Math.max(2, slideSeconds) : 8,
+    slide_seconds: Number.isFinite(slideSeconds) ? Math.max(2, slideSeconds) : 6,
     qr_every: Number.isFinite(qrEvery) ? Math.max(1, qrEvery) : 5,
   };
 }

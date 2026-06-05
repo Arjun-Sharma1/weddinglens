@@ -47,7 +47,7 @@ export function PhotoWall({
   return (
     <main className="relative min-h-dvh w-full bg-night text-paper">
       {/* Header */}
-      <header className="sticky top-0 z-20 flex items-center justify-between border-b border-paper/10 bg-night/80 px-6 py-4 backdrop-blur-md md:px-10">
+      <header className="glass-dark sticky top-0 z-20 flex items-center justify-between border-x-0 border-t-0 px-6 py-4 md:px-10">
         <div>
           <p className="eyebrow text-gold-light">Live photo wall</p>
           <h1 className="font-display text-2xl leading-tight md:text-3xl">
@@ -61,7 +61,7 @@ export function PhotoWall({
               shared
             </div>
           </div>
-          <div className="hidden rounded-xl bg-paper p-2 ring-1 ring-gold/30 sm:block [&_svg]:h-16 [&_svg]:w-16">
+          <div className="hidden rounded-xl bg-paper p-2 shadow-night ring-1 ring-gold/40 sm:block [&_svg]:h-16 [&_svg]:w-16">
             <div dangerouslySetInnerHTML={{ __html: qrMarkup }} />
           </div>
         </div>
@@ -81,15 +81,17 @@ export function PhotoWall({
           {photos.map((photo) => (
             <figure
               key={photo.id}
-              className="animate-rise break-inside-avoid overflow-hidden rounded-xl ring-1 ring-paper/10"
+              className="animate-rise break-inside-avoid rounded-2xl bg-night-raised p-1.5 shadow-[0_22px_45px_-22px_rgba(0,0,0,0.9)] ring-1 ring-gold/10"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={publicPhotoUrl(photo.medium_path)}
-                alt=""
-                loading="lazy"
-                className="w-full object-cover transition duration-500 hover:scale-[1.02]"
-              />
+              <div className="overflow-hidden rounded-xl">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={publicPhotoUrl(photo.medium_path)}
+                  alt=""
+                  loading="lazy"
+                  className="w-full object-cover transition duration-500 hover:scale-[1.03]"
+                />
+              </div>
             </figure>
           ))}
         </div>

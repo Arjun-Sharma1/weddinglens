@@ -3,8 +3,16 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Brand } from "@/components/Brand";
+import { PhotoReview } from "@/components/PhotoReview";
 
-type Mode = "starting" | "live" | "fallback" | "uploading" | "success" | "error";
+type Mode =
+  | "starting"
+  | "live"
+  | "review"
+  | "fallback"
+  | "uploading"
+  | "success"
+  | "error";
 
 const MAX_EDGE = 1920; // downscale captured frame before upload
 const STALE_HINT = "Please take a new photo instead of uploading an old one.";
@@ -18,15 +26,37 @@ export function CameraCapture({
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const reviewUrlRef = useRef<string | null>(null);
   const [mode, setMode] = useState<Mode>("starting");
   const [facing, setFacing] = useState<"environment" | "user">("environment");
   const [message, setMessage] = useState<string | null>(null);
   const [duplicate, setDuplicate] = useState(false);
   const [pending, setPending] = useState(false);
+  const [review, setReview] = useState<{ src: string; blob: Blob } | null>(null);
 
   const stopStream = useCallback(() => {
     streamRef.current?.getTracks().forEach((t) => t.stop());
     streamRef.current = null;
+  }, []);
+
+  // ── Review stage (between capture and upload) ───────────
+  const enterReview = useCallback((blob: Blob) => {
+    if (reviewUrlRef.current) URL.revokeObjectURL(reviewUrlRef.current);
+    const url = URL.createObjectURL(blob);
+    reviewUrlRef.current = url;
+    setReview({ src: url, blob });
+    setMode("review");
+  }, []);
+
+  const clearReview = useCallback(() => {
+    if (reviewUrlRef.current) URL.revokeObjectURL(reviewUrlRef.current);
+    reviewUrlRef.current = null;
+    setReview(null);
+  }, []);
+
+  // Revoke a lingering object URL if we unmount mid-review.
+  useEffect(() => () => {
+    if (reviewUrlRef.current) URL.revokeObjectURL(reviewUrlRef.current);
   }, []);
 
   const startCamera = useCallback(async () => {
@@ -101,20 +131,35 @@ export function CameraCapture({
     if (!ctx) return;
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     canvas.toBlob(
-      (blob) => blob && upload(blob),
+      (blob) => blob && enterReview(blob),
       "image/jpeg",
       0.9,
     );
-  }, [upload]);
+  }, [enterReview]);
 
   const onFilePicked = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
-      if (file) upload(file);
+      if (file) enterReview(file);
       e.target.value = "";
     },
-    [upload],
+    [enterReview],
   );
+
+  // ── Review actions ──────────────────────────────────────
+  const confirmReview = useCallback(
+    (blob: Blob) => {
+      clearReview();
+      upload(blob);
+    },
+    [clearReview, upload],
+  );
+
+  const retakeReview = useCallback(() => {
+    clearReview();
+    if (streamRef.current) setMode("live");
+    else startCamera();
+  }, [clearReview, startCamera]);
 
   const reset = useCallback(() => {
     setMessage(null);
@@ -269,6 +314,16 @@ export function CameraCapture({
             <FlipGlyph />
           </button>
         </div>
+      )}
+
+      {/* Review / crop / confirm overlay */}
+      {mode === "review" && review && (
+        <PhotoReview
+          src={review.src}
+          original={review.blob}
+          onConfirm={confirmReview}
+          onRetake={retakeReview}
+        />
       )}
     </main>
   );

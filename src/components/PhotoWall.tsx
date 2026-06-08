@@ -1,14 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { usePhotoStream } from "@/hooks/usePhotoStream";
 import { useFullscreen } from "@/hooks/useFullscreen";
 import { publicPhotoUrl } from "@/lib/storage";
 import { QrPanel } from "@/components/QrPanel";
 import type { EventRow, PhotoRow } from "@/lib/types";
-
-const SPOTLIGHT_MS = 5000;
 
 export function PhotoWall({
   event,
@@ -21,19 +19,8 @@ export function PhotoWall({
   qrMarkup: string;
   uploadHref: string;
 }) {
-  const { photos, latestId } = usePhotoStream(event.id, initialPhotos);
+  const { photos } = usePhotoStream(event.id, initialPhotos);
   const { toggle } = useFullscreen();
-  const [spotlight, setSpotlight] = useState<PhotoRow | null>(null);
-
-  // 5-second spotlight whenever a brand-new photo arrives.
-  useEffect(() => {
-    if (!latestId) return;
-    const photo = photos.find((p) => p.id === latestId);
-    if (!photo) return;
-    setSpotlight(photo);
-    const t = setTimeout(() => setSpotlight(null), SPOTLIGHT_MS);
-    return () => clearTimeout(t);
-  }, [latestId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -102,22 +89,6 @@ export function PhotoWall({
               </div>
             </figure>
           ))}
-        </div>
-      )}
-
-      {/* Spotlight overlay for the latest arrival */}
-      {spotlight && (
-        <div className="animate-fade-in fixed inset-0 z-30 flex items-center justify-center bg-night/85 backdrop-blur-md">
-          <div className="relative flex flex-col items-center px-6">
-            <span className="eyebrow mb-5 text-gold-light">Just shared ♥</span>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={publicPhotoUrl(spotlight.display_path)}
-              alt=""
-              className="max-h-[78dvh] max-w-[90vw] rounded-2xl shadow-[0_40px_120px_-30px_rgba(0,0,0,0.9)] ring-1 ring-gold/30"
-              style={{ animation: "pulse-soft 5s ease-in-out" }}
-            />
-          </div>
         </div>
       )}
     </main>

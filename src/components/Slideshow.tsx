@@ -45,10 +45,23 @@ export function Slideshow({
   const showPhoto = useCallback((photo: PhotoRow) => {
     const url = publicPhotoUrl(photo.display_path);
     const next = frontRef.current === "a" ? "b" : "a";
+    // Point the (hidden) back layer at the new photo first. Because we change
+    // src while it's still at opacity-0, the browser's habit of keeping the old
+    // frame visible until the new one decodes can't leak on screen.
     if (next === "a") setAUrl(url);
     else setBUrl(url);
-    frontRef.current = next;
-    setFront(next);
+    // Only flip the crossfade once the new image is actually decoded — otherwise
+    // the reused layer fades in still showing its previous photo, which then
+    // pops to the new one (the "previous photo flashes" bug).
+    const reveal = () => {
+      frontRef.current = next;
+      setFront(next);
+    };
+    const pre = new Image();
+    pre.onload = reveal;
+    pre.onerror = reveal;
+    pre.src = url;
+    if (pre.complete) reveal();
     // Best-effort "displayed" stat.
     fetch(`/api/events/${event.slug}/displayed`, {
       method: "POST",

@@ -52,10 +52,17 @@ create table if not exists public.photos (
   quality_score numeric,   -- 0..100 composite for curation
   is_blurry     boolean not null default false,
   is_dark       boolean not null default false,
+  nsfw_score    numeric,   -- max explicit-category confidence 0..100 (null = check skipped)
+  is_explicit   boolean not null default false,  -- tripped the NSFW threshold → stored rejected
   display_count int not null default 0,
   created_at    timestamptz not null default now(),
   unique (event_id, hash)  -- exact-duplicate detection
 );
+
+-- Backfill columns on pre-existing photos tables (idempotent).
+alter table public.photos
+  add column if not exists nsfw_score  numeric,
+  add column if not exists is_explicit boolean not null default false;
 
 create index if not exists photos_event_status_created_idx
   on public.photos (event_id, status, created_at desc);

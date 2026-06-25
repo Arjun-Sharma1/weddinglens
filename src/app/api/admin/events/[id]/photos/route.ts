@@ -52,6 +52,7 @@ export async function POST(
 
   const result = await ingestPhoto(file, event, {
     enforceFreshness: false,
+    enforceNsfw: false,
     forceStatus: "approved",
   });
 

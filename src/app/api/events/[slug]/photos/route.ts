@@ -40,9 +40,12 @@ export async function POST(
     return NextResponse.json({ error: "No photo provided." }, { status: 400 });
   }
 
-  // 3. Ingest — guests are held to the live-photo freshness gate, and the
-  //    resulting status follows the event's moderation mode.
-  const result = await ingestPhoto(file, event, { enforceFreshness: true });
+  // 3. Ingest — guests are held to the live-photo freshness gate and the NSFW
+  //    screen, and the resulting status follows the event's moderation mode.
+  const result = await ingestPhoto(file, event, {
+    enforceFreshness: true,
+    enforceNsfw: true,
+  });
 
   if (!result.ok) {
     return NextResponse.json(

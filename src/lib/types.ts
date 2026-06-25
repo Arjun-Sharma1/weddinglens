@@ -34,6 +34,8 @@ export interface PhotoRow {
   quality_score: number | null;
   is_blurry: boolean;
   is_dark: boolean;
+  nsfw_score: number | null;
+  is_explicit: boolean;
   display_count: number;
   created_at: string;
 }

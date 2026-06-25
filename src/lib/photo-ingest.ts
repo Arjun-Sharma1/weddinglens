@@ -1,6 +1,7 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { processImage, sha256 } from "@/lib/images";
+import { screenForNsfw, type NsfwResult } from "@/lib/moderation";
 import { extractCapturedAt, isStalePhoto } from "@/lib/exif";
 import { PHOTOS_BUCKET } from "@/lib/storage";
 import type { EventRow, PhotoStatus } from "@/lib/types";
@@ -15,8 +16,15 @@ export interface IngestOptions {
   /** Enforce the live-photo EXIF freshness gate (guest captures: true). */
   enforceFreshness: boolean;
   /**
+   * Run the AWS Rekognition NSFW screen (guest uploads: true). Explicit photos
+   * are silently stored as `rejected`. Fails open if Rekognition is
+   * unavailable. Seed uploads (trusted moderator) skip it.
+   */
+  enforceNsfw: boolean;
+  /**
    * Force the inserted row's status. When omitted the status follows the
-   * event's moderation mode (manual → pending, auto → approved).
+   * event's moderation mode (manual → pending, auto → approved). An explicit
+   * NSFW hit overrides this and forces `rejected`.
    */
   forceStatus?: PhotoStatus;
 }
@@ -81,6 +89,13 @@ export async function ingestPhoto(
     return { ok: false, httpStatus: 422, error: "Could not process that image." };
   }
 
+  // 4b. NSFW screen (guest uploads only). Explicit photos are stored as
+  //     `rejected` so they never reach a display surface; fails open.
+  let nsfw: NsfwResult = { ran: false, isExplicit: false, score: null };
+  if (opts.enforceNsfw) {
+    nsfw = await screenForNsfw(buffer);
+  }
+
   // 5. Upload renditions to Storage.
   const photoId = crypto.randomUUID();
   const prefix = `events/${event.id}/${photoId}`;
@@ -98,9 +113,11 @@ export async function ingestPhoto(
     paths[r.key] = path;
   }
 
-  // 6. Insert the photo row.
-  const status: PhotoStatus =
-    opts.forceStatus ?? (event.moderation === "manual" ? "pending" : "approved");
+  // 6. Insert the photo row. An explicit NSFW hit forces `rejected`,
+  //    overriding the moderation-derived status.
+  const status: PhotoStatus = nsfw.isExplicit
+    ? "rejected"
+    : opts.forceStatus ?? (event.moderation === "manual" ? "pending" : "approved");
   const { data: inserted, error: insErr } = await supabase
     .from("photos")
     .insert({
@@ -120,6 +137,8 @@ export async function ingestPhoto(
       quality_score: processed.qualityScore,
       is_blurry: processed.isBlurry,
       is_dark: processed.isDark,
+      nsfw_score: nsfw.score,
+      is_explicit: nsfw.isExplicit,
     })
     .select("id")
     .single();

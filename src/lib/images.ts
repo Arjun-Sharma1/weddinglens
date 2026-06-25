@@ -25,9 +25,12 @@ export interface ProcessedImage {
 const SIZES = { thumb: 320, medium: 1080, display: 1920 } as const;
 
 // Heuristic thresholds (documented, tunable). The sharpness scale is the
-// contrast-normalised Laplacian variance from analyzePixels(): in-focus photos
-// land in the tens of thousands, clearly blurry ones near zero.
-const BLUR_THRESHOLD = 1500; // normalised laplacian variance below this ≈ blurry
+// contrast-normalised Laplacian variance from analyzePixels(). Measured on real
+// photographs (not synthetic test patterns): in-focus shots land in the low
+// hundreds to a few thousand, while clearly blurred ones fall below ~70. Only
+// pathological high-contrast images (e.g. a checkerboard) reach tens of
+// thousands, so calibrate against real photos, not those.
+const BLUR_THRESHOLD = 120; // normalised laplacian variance below this ≈ blurry
 const DARK_LUMA = 50; // mean luma below this ≈ underexposed
 const DARK_DIM_LUMA = 80; // dim AND mostly-shadow (e.g. backlit subject) ≈ dark
 const SHADOW_LUMA = 40; // a pixel at/below this luma counts as "in shadow"
@@ -185,9 +188,10 @@ function percentile(hist: Uint32Array, total: number, p: number): number {
 
 /** Composite 0..100 quality score weighting sharpness and exposure. */
 function compositeQuality(brightness: number, sharpness: number): number {
-  // sqrt keeps a usable gradient across the wide normalised-variance range
-  // (saturates around an in-focus ~80k; soft shots land mid-scale).
-  const sharpScore = Math.min(1, Math.sqrt(sharpness / 80000));
+  // sqrt keeps a usable gradient across the normalised-variance range. Calibrated
+  // to real photographs (see BLUR_THRESHOLD): a crisp shot saturates around ~1500,
+  // borderline-sharp ones land mid-scale, and anything below BLUR_THRESHOLD scores low.
+  const sharpScore = Math.min(1, Math.sqrt(sharpness / 1500));
   const exposureScore = 1 - Math.min(1, Math.abs(brightness - IDEAL_LUMA) / IDEAL_LUMA);
   const score = (0.6 * sharpScore + 0.4 * exposureScore) * 100;
   return Math.round(Math.max(0, Math.min(100, score)));

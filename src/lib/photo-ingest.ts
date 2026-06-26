@@ -6,7 +6,10 @@ import { extractCapturedAt, isStalePhoto } from "@/lib/exif";
 import { PHOTOS_BUCKET } from "@/lib/storage";
 import type { EventRow, PhotoStatus } from "@/lib/types";
 
-const MAX_BYTES = 20 * 1024 * 1024; // 20 MB
+// Absolute upload ceiling — guards server memory against abusive uploads. Files
+// under this but still large aren't rejected: processImage downscales them to a
+// reasonable size (see fitSource in images.ts).
+const MAX_BYTES = 60 * 1024 * 1024; // 60 MB
 const STALE_MESSAGE = "Please take a new photo instead of uploading an old one.";
 
 /** Minimal event shape the pipeline needs. */
@@ -51,7 +54,7 @@ export async function ingestPhoto(
 
   // 1. Validate the file.
   if (file.size > MAX_BYTES) {
-    return { ok: false, httpStatus: 413, error: "Photo is too large." };
+    return { ok: false, httpStatus: 413, error: "Photo is too large (over 60 MB)." };
   }
   if (file.type && !file.type.startsWith("image/")) {
     return { ok: false, httpStatus: 415, error: "File must be an image." };

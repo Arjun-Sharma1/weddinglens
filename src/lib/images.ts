@@ -24,6 +24,13 @@ export interface ProcessedImage {
 // Rendition target widths (longest edge), no upscaling.
 const SIZES = { thumb: 320, medium: 1080, display: 1920 } as const;
 
+// Inputs larger than this are downscaled (see fitSource) so the archival
+// original stays reasonable, rather than being rejected. Normal-sized photos
+// are left untouched and keep full source quality.
+const ORIGINAL_MAX_BYTES = 20 * 1024 * 1024; // 20 MB
+// Longest-edge steps tried (descending) when shrinking an oversized input.
+const FIT_EDGES = [4096, 3200, 2400, 1920] as const;
+
 // Heuristic thresholds (documented, tunable). The sharpness scale is the
 // contrast-normalised Laplacian variance from analyzePixels(). Measured on real
 // photographs (not synthetic test patterns): in-focus shots land in the low
@@ -46,15 +53,21 @@ export function sha256(buffer: Buffer): string {
  * thumb/medium/display WebP renditions plus the (re-encoded) original.
  */
 export async function processImage(input: Buffer): Promise<ProcessedImage> {
+  // Hash the original uploaded bytes so dedup is stable regardless of any
+  // downscaling we apply below.
   const hash = sha256(input);
 
+  // Downscale oversized sources so very large camera/pro photos ingest instead
+  // of being rejected. Normal-sized inputs pass through unchanged.
+  const source = await fitSource(input);
+
   // Auto-orient via EXIF so all derived renditions are upright.
-  const base = sharp(input, { failOn: "none" }).rotate();
+  const base = sharp(source, { failOn: "none" }).rotate();
   const meta = await base.metadata();
   const width = meta.width ?? 0;
   const height = meta.height ?? 0;
 
-  const { brightness, sharpness, darkFraction } = await analyzePixels(input);
+  const { brightness, sharpness, darkFraction } = await analyzePixels(source);
 
   // Underexposed if the whole frame is dark, or it's dim *and* most of the
   // frame is buried in shadow — catches backlit subjects a mean alone misses.
@@ -66,15 +79,15 @@ export async function processImage(input: Buffer): Promise<ProcessedImage> {
 
   // Original is normalized to an upright JPEG at full quality for archival
   // (download package) without leaking EXIF/location metadata.
-  const original = await sharp(input, { failOn: "none" })
+  const original = await sharp(source, { failOn: "none" })
     .rotate()
     .jpeg({ quality: 92, mozjpeg: true })
     .toBuffer();
 
   const [thumb, medium, display] = await Promise.all([
-    encodeWebp(input, SIZES.thumb, 70),
-    encodeWebp(input, SIZES.medium, 80),
-    encodeWebp(input, SIZES.display, 82),
+    encodeWebp(source, SIZES.thumb, 70),
+    encodeWebp(source, SIZES.medium, 80),
+    encodeWebp(source, SIZES.display, 82),
   ]);
 
   return {
@@ -93,6 +106,27 @@ export async function processImage(input: Buffer): Promise<ProcessedImage> {
       { key: "display", buffer: display, ext: "webp", contentType: "image/webp" },
     ],
   };
+}
+
+/**
+ * Normalize an oversized input for the pipeline: when the source exceeds
+ * ORIGINAL_MAX_BYTES, downscale its longest edge (re-encoding to JPEG) until it
+ * fits, stepping through FIT_EDGES. Inputs already within budget are returned
+ * untouched, so their renditions keep full source quality. Pro/full-res photos
+ * that used to be rejected now ingest at a slightly reduced size instead.
+ */
+async function fitSource(input: Buffer): Promise<Buffer> {
+  if (input.byteLength <= ORIGINAL_MAX_BYTES) return input;
+  let fitted = input;
+  for (const edge of FIT_EDGES) {
+    fitted = await sharp(input, { failOn: "none" })
+      .rotate()
+      .resize({ width: edge, height: edge, fit: "inside", withoutEnlargement: true })
+      .jpeg({ quality: 90, mozjpeg: true })
+      .toBuffer();
+    if (fitted.byteLength <= ORIGINAL_MAX_BYTES) break;
+  }
+  return fitted;
 }
 
 async function encodeWebp(input: Buffer, width: number, quality: number) {

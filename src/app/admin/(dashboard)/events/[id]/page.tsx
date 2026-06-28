@@ -41,7 +41,9 @@ export default async function EventDetail({
       <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
         <div>
           <span className="eyebrow">/{event.slug}</span>
-          <h1 className="font-display mt-1 text-4xl text-ink">{event.name}</h1>
+          <h1 className="font-display mt-1 text-3xl text-ink sm:text-4xl">
+            {event.name}
+          </h1>
           <p className="mt-1 text-ink-faint">
             {formatEventDate(event.event_date) || "No date set"} · {event.mode} ·{" "}
             {event.moderation === "manual" ? "manual review" : "auto-approve"}
@@ -89,7 +91,7 @@ export default async function EventDetail({
 
       <div className="rule-gold my-9" />
 
-      <div className="grid gap-8 md:grid-cols-[auto_1fr]">
+      <div className="grid gap-6 md:grid-cols-[auto_1fr] md:gap-8">
         {/* QR */}
         <div className="text-center">
           <div className="inline-block rounded-2xl border border-line bg-white p-4 shadow-e3">
@@ -113,16 +115,16 @@ export default async function EventDetail({
           <LinkRow label="Slideshow" url={`${base}/event/${event.slug}/slideshow`} openable />
           <LinkRow label="Photo wall" url={`${base}/event/${event.slug}/wall`} openable />
 
-          <div className="flex flex-wrap gap-2 pt-3">
+          <div className="flex flex-col gap-2 pt-3 sm:flex-row sm:flex-wrap">
             <Link
               href={`/admin/events/${event.id}/moderate`}
-              className="btn btn-primary px-5 py-2.5 text-sm"
+              className="btn btn-primary w-full px-5 py-2.5 text-sm sm:w-auto"
             >
               Moderate photos
             </Link>
             <a
               href={`/api/admin/events/${event.id}/download`}
-              className="btn btn-ghost px-5 py-2.5 text-sm"
+              className="btn btn-ghost w-full px-5 py-2.5 text-sm sm:w-auto"
             >
               Download package (ZIP + CSV)
             </a>

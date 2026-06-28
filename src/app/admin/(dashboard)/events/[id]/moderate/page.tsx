@@ -25,7 +25,9 @@ export default async function ModeratePage({
       >
         ← {event.name}
       </Link>
-      <h1 className="font-display mt-4 text-4xl text-ink">Moderate photos</h1>
+      <h1 className="font-display mt-4 text-3xl text-ink sm:text-4xl">
+        Moderate photos
+      </h1>
       <p className="mt-2 text-ink-soft">
         {event.moderation === "manual"
           ? "Manual review is on — only approved photos appear publicly."

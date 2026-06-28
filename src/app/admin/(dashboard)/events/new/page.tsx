@@ -8,7 +8,7 @@ export default function NewEventPage() {
       <Link href="/admin" className="text-sm text-ink-faint hover:text-ink">
         ← Events
       </Link>
-      <h1 className="font-display mt-4 text-4xl text-ink">New event</h1>
+      <h1 className="font-display mt-4 text-3xl text-ink sm:text-4xl">New event</h1>
       <p className="mt-2 text-ink-soft">
         Give your celebration a name and a link. You can fine-tune everything
         later.

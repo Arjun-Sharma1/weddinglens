@@ -26,7 +26,7 @@ export default async function DashboardLayout({
   return (
     <div className="grain relative min-h-dvh">
       <header className="glass sticky top-0 z-20 border-x-0 border-t-0">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4 sm:px-6">
           <Link href="/admin" className="flex items-center gap-3">
             <Brand withMark markSize={26} className="text-lg" />
             <span className="hidden text-xs uppercase tracking-[0.25em] text-ink-faint sm:inline">
@@ -38,7 +38,7 @@ export default async function DashboardLayout({
           </form>
         </div>
       </header>
-      <main className="relative z-10 mx-auto max-w-5xl px-6 py-10">{children}</main>
+      <main className="relative z-10 mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10">{children}</main>
     </div>
   );
 }

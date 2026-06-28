@@ -11,12 +11,15 @@ export default async function AdminHome() {
 
   return (
     <div>
-      <div className="flex items-end justify-between">
+      <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <p className="eyebrow">Your celebrations</p>
-          <h1 className="font-display mt-2 text-4xl text-ink">Events</h1>
+          <h1 className="font-display mt-2 text-3xl text-ink sm:text-4xl">Events</h1>
         </div>
-        <Link href="/admin/events/new" className="btn btn-primary px-5 py-3 text-sm">
+        <Link
+          href="/admin/events/new"
+          className="btn btn-primary px-5 py-3 text-sm"
+        >
           + New event
         </Link>
       </div>

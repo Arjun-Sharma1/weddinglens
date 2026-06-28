@@ -91,7 +91,7 @@ export default async function EventDetail({
 
       <div className="rule-gold my-9" />
 
-      <div className="grid gap-6 md:grid-cols-[auto_1fr] md:gap-8">
+      <div className="grid gap-6 md:grid-cols-[auto_minmax(0,1fr)] md:gap-8">
         {/* QR */}
         <div className="text-center">
           <div className="inline-block rounded-2xl border border-line bg-white p-4 shadow-e3">
@@ -110,7 +110,7 @@ export default async function EventDetail({
         </div>
 
         {/* Links */}
-        <div className="space-y-3">
+        <div className="min-w-0 space-y-3">
           <LinkRow label="Guest upload" url={guestUrl} />
           <LinkRow label="Slideshow" url={`${base}/event/${event.slug}/slideshow`} openable />
           <LinkRow label="Photo wall" url={`${base}/event/${event.slug}/wall`} openable />

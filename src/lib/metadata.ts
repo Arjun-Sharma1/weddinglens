@@ -35,7 +35,7 @@ const SURFACE: Record<
  * Crucially overrides `openGraph`/`twitter` titles. Next merges metadata
  * **shallowly**, so a page that sets only `title` still inherits the root's
  * `openGraph.title` — meaning every shared link preview would otherwise read
- * "your live event photo wall" instead of the event's name.
+ * "your live event photo slideshow" instead of the event's name.
  */
 export function eventMetadata(
   event: EventRow | null,

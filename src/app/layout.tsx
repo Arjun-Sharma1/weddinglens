@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "WeddingLens Live",
     description:
-      "Every guest, a photographer — a live event photo wall on the big screen.",
+      "Every guest, a photographer — a live event photo slideshow on the big screen.",
   },
 };
 

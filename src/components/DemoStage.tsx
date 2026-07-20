@@ -391,9 +391,9 @@ export function DemoStage() {
                   )}
 
                   <div className="absolute right-4 top-4 text-right">
-                    <p className="eyebrow !text-[0.55rem] text-gold-light">
+                    {/* <p className="eyebrow !text-[0.55rem] text-gold-light">
                       Live photo wall
-                    </p>
+                    </p> */}
                     <p className="font-display text-lg leading-tight text-paper/90">
                       Aria &amp; Sam&rsquo;s Wedding
                     </p>
@@ -405,7 +405,7 @@ export function DemoStage() {
                     </div>
                     <div className="text-left">
                       <p className="eyebrow !text-[0.55rem] text-gold-light">
-                        Scan to join
+                        Scan QR to join
                       </p>
                     </div>
                   </div>

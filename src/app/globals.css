@@ -257,6 +257,58 @@ body {
 }
 .vignette > * { position: relative; z-index: 1; }
 
+/* ── Scattered guest prints — the photo wall assembling itself
+      around the hero. Positions/rotation set per-print via
+      --r (rotate), --s (width), --d (delay) custom props. ───── */
+.prints-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+.print {
+  position: absolute;
+  width: var(--s, 6.5rem);
+  padding: 7px 7px 20px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  box-shadow: var(--elev-3);
+  transform: rotate(var(--r, 0deg));
+  animation:
+    fade-in 0.9s ease both,
+    drift 7s ease-in-out infinite alternate;
+  animation-delay: var(--d, 0s);
+}
+.print > span {
+  display: block;
+  aspect-ratio: 4 / 5;
+  border-radius: 3px;
+}
+/* Warm "photo" fills with a soft window-light highlight. */
+.print-gold > span {
+  background:
+    radial-gradient(60% 60% at 30% 25%, rgba(255, 255, 255, 0.45), transparent 60%),
+    linear-gradient(135deg, var(--gold-light), var(--gold));
+}
+.print-blush > span {
+  background:
+    radial-gradient(60% 60% at 30% 25%, rgba(255, 255, 255, 0.45), transparent 60%),
+    linear-gradient(135deg, #f0d9cd, #dcae97);
+}
+.print-fawn > span {
+  background:
+    radial-gradient(60% 60% at 30% 25%, rgba(255, 255, 255, 0.45), transparent 60%),
+    linear-gradient(135deg, #e6d7bf, #c9b192);
+}
+
+/* Animated sweep across .foil text — hero accents only. */
+.foil-shimmer {
+  background-size: 220% auto;
+  animation: shimmer 3.5s linear infinite;
+}
+
 /* ── Motion ───────────────────────────────────────────────── */
 @keyframes rise {
   from { opacity: 0; transform: translateY(14px); }
@@ -273,6 +325,12 @@ body {
 @keyframes pulse-soft {
   0%, 100% { transform: scale(1); opacity: 1; }
   50%      { transform: scale(1.04); opacity: 0.92; }
+}
+
+/* Gentle vertical float for the scattered prints. */
+@keyframes drift {
+  from { transform: rotate(var(--r, 0deg)) translateY(0); }
+  to   { transform: rotate(var(--r, 0deg)) translateY(-10px); }
 }
 
 @keyframes kenburns {

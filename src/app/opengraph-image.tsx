@@ -2,7 +2,7 @@ import { ImageResponse } from "next/og";
 import { markDataUri } from "@/components/mark";
 
 // Social share card — ivory + champagne gold, mark over the wordmark + tagline.
-export const alt = "WeddingLens Live — a live event photo wall";
+export const alt = "WeddingLens Live — a live event photo slideshow";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

@@ -12,7 +12,7 @@ export default function Home() {
         <span className="rule-gold w-12" />
       </div>
 
-      <h1 className="font-display mt-6 max-w-3xl text-balance text-6xl leading-[1.02] text-ink md:text-7xl animate-rise">
+      <h1 className="font-display mt-6 max-w-3xl text-balance text-4xl leading-[1.02] text-ink sm:text-6xl md:text-7xl animate-rise">
         Every guest, a <span className="foil">photographer</span>.
       </h1>
 
@@ -22,7 +22,10 @@ export default function Home() {
       </p>
 
       <div className="mt-10 flex flex-wrap items-center justify-center gap-3 animate-rise">
-        <Link href="/admin" className="btn btn-primary px-7 py-3.5">
+        <Link href="/demo" className="btn btn-primary px-7 py-3.5">
+          See it in action
+        </Link>
+        <Link href="/admin" className="btn btn-ghost px-6 py-3">
           Organizer studio
         </Link>
       </div>

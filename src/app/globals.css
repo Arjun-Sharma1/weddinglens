@@ -275,8 +275,21 @@ body {
   50%      { transform: scale(1.04); opacity: 0.92; }
 }
 
+@keyframes kenburns {
+  from { transform: scale(1); }
+  to   { transform: scale(1.07); }
+}
+@keyframes flash-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
 .animate-rise { animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
 .animate-fade-in { animation: fade-in 0.6s ease both; }
+/* Slow drift for slideshow photos — pairs with a crossfade on photo change. */
+.animate-kenburns { animation: kenburns 7s ease-out both; }
+/* Camera-flash overlay: starts opaque, burns out quickly. */
+.animate-flash { animation: flash-out 0.45s ease-out both; }
 
 /* Staggered grid entrance — set --i on each child for a cascade. */
 .stagger > * {
